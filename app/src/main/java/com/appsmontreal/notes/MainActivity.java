@@ -3,17 +3,20 @@ package com.appsmontreal.notes;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
 public class MainActivity extends AppCompatActivity {
+    Intent intent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        intent = new Intent(this,CreateNoteActivity.class);
     }
 
     //To inflate menu
@@ -30,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
         super.onOptionsItemSelected(item);
         switch(item.getItemId()){
             case R.id.addNote:
+                startActivity(intent);
                 break;
 
             case R.id.exit:
