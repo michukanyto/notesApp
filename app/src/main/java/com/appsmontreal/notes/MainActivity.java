@@ -4,7 +4,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -16,20 +15,27 @@ import android.view.MenuItem;
 
 import com.appsmontreal.notes.Serializer.ObjectSerializer;
 
+import java.io.IOException;
+import java.util.ArrayList;
+
 public class MainActivity extends AppCompatActivity {
+    private static final String FILE_NAME = "DATA";
+    public static final String NAME_NOTE = "NOTE" ;
     private Intent intent;
     private SharedPreferences sharedPreferences;
     private ObjectSerializer objectSerializer;
     private SharedPreferences.Editor editor;
     private String note;
+    private ArrayList<String> notes;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         intent = new Intent(this,CreateNoteActivity.class);
-        sharedPreferences = getSharedPreferences("DATA", Context.MODE_PRIVATE);
+        sharedPreferences = getSharedPreferences(FILE_NAME, Context.MODE_PRIVATE);
         editor = sharedPreferences.edit();
+        notes = new ArrayList<>();
     }
 
     //To inflate menu
@@ -67,10 +73,24 @@ public class MainActivity extends AppCompatActivity {
 
         if (requestCode == 911){
             if (resultCode == RESULT_OK) {
-                note = data.getStringExtra("NOTE");
+                note = data.getStringExtra(NAME_NOTE);
                 Log.i("----------------->", note);
+                notes.add(note);
             }
         }
+        saveNotes();
 
+    }
+
+    private void saveNotes() {
+        try {
+            editor.putString("notes", objectSerializer.serialize(note)).apply();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+         reloadList();
+    }
+
+    private void reloadList() {
     }
 }

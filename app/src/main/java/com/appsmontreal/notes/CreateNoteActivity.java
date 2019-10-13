@@ -34,7 +34,7 @@ public class CreateNoteActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 returnIntent = new Intent();
-                returnIntent.putExtra("NOTE",noteEditText.getText().toString());
+                returnIntent.putExtra(MainActivity.NAME_NOTE,noteEditText.getText().toString());
                 setResult(RESULT_OK,returnIntent);
                 finish();
             }
