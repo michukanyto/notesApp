@@ -16,7 +16,11 @@ import android.view.MenuItem;
 import com.appsmontreal.notes.Serializer.ObjectSerializer;
 
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
     private static final String FILE_NAME = "DATA";
@@ -27,6 +31,8 @@ public class MainActivity extends AppCompatActivity {
     private SharedPreferences.Editor editor;
     private String note;
     private ArrayList<String> notes;
+    Date date;
+    String newNameNote;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +42,9 @@ public class MainActivity extends AppCompatActivity {
         sharedPreferences = getSharedPreferences(FILE_NAME, Context.MODE_PRIVATE);
         editor = sharedPreferences.edit();
         notes = new ArrayList<>();
+        date = new Date();
+        reloadList();
+
     }
 
     //To inflate menu
@@ -75,6 +84,8 @@ public class MainActivity extends AppCompatActivity {
             if (resultCode == RESULT_OK) {
                 note = data.getStringExtra(NAME_NOTE);
                 Log.i("----------------->", note);
+                DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm");
+                newNameNote = dateFormat.format(Calendar.getInstance().getTime());
                 notes.add(note);
             }
         }
@@ -84,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void saveNotes() {
         try {
-            editor.putString("notes", objectSerializer.serialize(note)).apply();
+            editor.putString(newNameNote, objectSerializer.serialize(note)).apply();
         } catch (IOException e) {
             e.printStackTrace();
         }
