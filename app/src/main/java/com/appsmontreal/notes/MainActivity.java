@@ -12,6 +12,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
 import com.appsmontreal.notes.Serializer.ObjectSerializer;
 
@@ -25,24 +27,31 @@ import java.util.Date;
 public class MainActivity extends AppCompatActivity {
     private static final String FILE_NAME = "DATA";
     public static final String NAME_NOTE = "NOTE" ;
+    public static final String FORMAT_PATTERN = "yy-mm-dd hh:mm";
+    private ListView notesListView;
     private Intent intent;
     private SharedPreferences sharedPreferences;
     private ObjectSerializer objectSerializer;
     private SharedPreferences.Editor editor;
     private String note;
     private ArrayList<String> notes;
-    Date date;
-    String newNameNote;
+    private Date date;
+    private String newNameNote;
+    private  DateFormat dateFormat;
+    private ArrayAdapter<String> arrayAdapter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        notesListView = findViewById(R.id.notesListView);
         intent = new Intent(this,CreateNoteActivity.class);
         sharedPreferences = getSharedPreferences(FILE_NAME, Context.MODE_PRIVATE);
         editor = sharedPreferences.edit();
         notes = new ArrayList<>();
         date = new Date();
+        dateFormat = new SimpleDateFormat(FORMAT_PATTERN);
         reloadList();
 
     }
@@ -84,8 +93,8 @@ public class MainActivity extends AppCompatActivity {
             if (resultCode == RESULT_OK) {
                 note = data.getStringExtra(NAME_NOTE);
                 Log.i("----------------->", note);
-                DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm");
                 newNameNote = dateFormat.format(Calendar.getInstance().getTime());
+                Log.i("----------------->", newNameNote);
                 notes.add(note);
             }
         }
@@ -95,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void saveNotes() {
         try {
-            editor.putString(newNameNote, objectSerializer.serialize(note)).apply();
+            editor.putString("key", objectSerializer.serialize(notes)).apply();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -103,5 +112,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void reloadList() {
+        notes.clear();
+        try {
+            notes = (ArrayList<String>) objectSerializer.deserialize(sharedPreferences.getString("key",objectSerializer.serialize(new ArrayList<String>())));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Log.i("------------>Array", notes.toString());
+        arrayAdapter = new ArrayAdapter<>(this,android.R.layout.simple_list_item_1,notes);
+        notesListView.setAdapter(arrayAdapter);
+
     }
 }
