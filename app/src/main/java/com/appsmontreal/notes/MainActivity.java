@@ -18,6 +18,7 @@ import android.widget.ListView;
 import com.appsmontreal.notes.Serializer.ObjectSerializer;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -27,6 +28,7 @@ import java.util.Date;
 public class MainActivity extends AppCompatActivity {
     private static final String FILE_NAME = "DATA";
     public static final String NAME_NOTE = "NOTE" ;
+    public static final String KEY_NOTE = "KEY_NOTE" ;
     public static final String FORMAT_PATTERN = "yy-mm-dd hh:mm";
     private ListView notesListView;
     private Intent intent;
@@ -35,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
     private SharedPreferences.Editor editor;
     private String note;
     private ArrayList<String> notes;
+    private ArrayList<String> titles;
     private Date date;
     private String newNameNote;
     private  DateFormat dateFormat;
@@ -50,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
         sharedPreferences = getSharedPreferences(FILE_NAME, Context.MODE_PRIVATE);
         editor = sharedPreferences.edit();
         notes = new ArrayList<>();
+        titles = new ArrayList<>();
         date = new Date();
         dateFormat = new SimpleDateFormat(FORMAT_PATTERN);
         reloadList();
@@ -104,7 +108,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void saveNotes() {
         try {
-            editor.putString("key", objectSerializer.serialize(notes)).apply();
+            editor.putString(KEY_NOTE, objectSerializer.serialize(notes)).apply();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -113,14 +117,24 @@ public class MainActivity extends AppCompatActivity {
 
     private void reloadList() {
         notes.clear();
+        titles.clear();
         try {
-            notes = (ArrayList<String>) objectSerializer.deserialize(sharedPreferences.getString("key",objectSerializer.serialize(new ArrayList<String>())));
+            notes = (ArrayList<String>) objectSerializer.deserialize(sharedPreferences.getString(KEY_NOTE,objectSerializer.serialize(new ArrayList<String>())));
+            getTitles();
         } catch (IOException e) {
             e.printStackTrace();
         }
         Log.i("------------>Array", notes.toString());
-        arrayAdapter = new ArrayAdapter<>(this,android.R.layout.simple_list_item_1,notes);
+        arrayAdapter = new ArrayAdapter<>(this,android.R.layout.simple_list_item_1,titles);
         notesListView.setAdapter(arrayAdapter);
 
+    }
+
+    private void getTitles() {//to handle a list with just one line
+        String[] nameTitles;
+        for (String s : notes) {
+            nameTitles = s.split("\n");
+            titles.add(nameTitles[0]);
+        }
     }
 }
