@@ -12,6 +12,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -24,6 +26,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Spliterator;
 
 public class MainActivity extends AppCompatActivity {
     private static final String FILE_NAME = "DATA";
@@ -31,14 +34,14 @@ public class MainActivity extends AppCompatActivity {
     public static final String KEY_NOTE = "KEY_NOTE" ;
     public static final String FORMAT_PATTERN = "yy-mm-dd hh:mm";
     private ListView notesListView;
-    private Intent intent;
+    private Intent intentCreateNote;
+    private Intent intentDisplayNote;
     private SharedPreferences sharedPreferences;
     private ObjectSerializer objectSerializer;
     private SharedPreferences.Editor editor;
     private String note;
     private ArrayList<String> notes;
     private ArrayList<String> titles;
-    private Date date;
     private String newNameNote;
     private  DateFormat dateFormat;
     private ArrayAdapter<String> arrayAdapter;
@@ -49,12 +52,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         notesListView = findViewById(R.id.notesListView);
-        intent = new Intent(this,CreateNoteActivity.class);
+        intentCreateNote = new Intent(this,CreateNoteActivity.class);
+        intentDisplayNote = new Intent(this,DisplayNoteActivity.class);
         sharedPreferences = getSharedPreferences(FILE_NAME, Context.MODE_PRIVATE);
         editor = sharedPreferences.edit();
         notes = new ArrayList<>();
         titles = new ArrayList<>();
-        date = new Date();
         dateFormat = new SimpleDateFormat(FORMAT_PATTERN);
         reloadList();
 
@@ -74,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
         super.onOptionsItemSelected(item);
         switch(item.getItemId()){
             case R.id.addNote:
-                startActivityForResult(intent,911);
+                startActivityForResult(intentCreateNote,911);
                 break;
 
             case R.id.exit:
@@ -127,6 +130,15 @@ public class MainActivity extends AppCompatActivity {
         Log.i("------------>Array", notes.toString());
         arrayAdapter = new ArrayAdapter<>(this,android.R.layout.simple_list_item_1,titles);
         notesListView.setAdapter(arrayAdapter);
+
+        notesListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                intentDisplayNote.putExtra("Note",notes.get(i));
+                Log.i("------------>item pushed ", notes.get(i));
+                startActivity(intentDisplayNote);
+            }
+        });
 
     }
 
