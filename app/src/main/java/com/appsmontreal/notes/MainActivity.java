@@ -2,9 +2,11 @@ package com.appsmontreal.notes;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -140,6 +142,27 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        notesListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+                launchDialog();
+                return true;
+            }
+        });
+
+    }
+
+    private void launchDialog() {
+        new AlertDialog.Builder(this)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setTitle("Alert")
+                .setMessage("Delete option is disable for now!")
+                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        Log.i("---------------->","Ok pressed");
+                    }
+                }).show();
     }
 
     private void getTitles() {//to handle a list with just one line
@@ -149,4 +172,6 @@ public class MainActivity extends AppCompatActivity {
             titles.add(nameTitles[0]);
         }
     }
+
+
 }
