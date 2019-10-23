@@ -47,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
     private String newNameNote;
     private  DateFormat dateFormat;
     private ArrayAdapter<String> arrayAdapter;
+    private int index;
 
 
     @Override
@@ -145,6 +146,7 @@ public class MainActivity extends AppCompatActivity {
         notesListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+                index = i;
                 launchDialog();
                 return true;
             }
@@ -152,17 +154,32 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    private void deleteNote() {
+        notes.remove(index);
+        arrayAdapter.remove(arrayAdapter.getItem(index));
+        arrayAdapter.notifyDataSetChanged();
+//        saveNotes();
+    }
+
     private void launchDialog() {
         new AlertDialog.Builder(this)
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setTitle("Alert")
-                .setMessage("Delete option is disable for now!")
-                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                .setMessage("Do you want to delete this note?")
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        Log.i("---------------->","Ok pressed");
+                        Log.i("---------------->","Yes pressed");
+                        deleteNote();
                     }
-                }).show();
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        Log.i("---------------->","No pressed");
+                    }
+                })
+                .show();
     }
 
     private void getTitles() {//to handle a list with just one line
