@@ -22,13 +22,10 @@ import android.widget.ListView;
 import com.appsmontreal.notes.Serializer.ObjectSerializer;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.Spliterator;
 
 public class MainActivity extends AppCompatActivity {
     private static final String FILE_NAME = "DATA";
@@ -63,11 +60,11 @@ public class MainActivity extends AppCompatActivity {
         notes = new ArrayList<>();
         titles = new ArrayList<>();
         dateFormat = new SimpleDateFormat(FORMAT_PATTERN);
-        reloadList();
-
+        reloadNotes();
     }
 
-    //To inflate menu
+
+    //Menu
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -81,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
         super.onOptionsItemSelected(item);
         switch(item.getItemId()){
             case R.id.addNote:
-                startActivityForResult(intentCreateNote,911);
+                startActivityForResult(intentCreateNote,911);//Create Note
                 break;
 
             case R.id.exit:
@@ -95,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    //Handling the note that's coming from CreateNoteActivity
+    //Handling the note that's coming from CreateNoteActivity and DisplayActivity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -118,16 +115,17 @@ public class MainActivity extends AppCompatActivity {
         saveNotes();
     }
 
-    private void saveNotes() {
-        try {
-            editor.putString(KEY_NOTE, objectSerializer.serialize(notes)).apply();
-        } catch (IOException e) {
-            e.printStackTrace();
+
+    private void getTitles() {//to handle a list with just one line
+        String[] nameTitles;
+        for (String s : notes) {
+            nameTitles = s.split("\n");
+            titles.add(nameTitles[0]);
         }
-         reloadList();
     }
 
-    private void reloadList() {
+
+    private void reloadNotes() {
         notes.clear();
         titles.clear();
         try {
@@ -147,7 +145,7 @@ public class MainActivity extends AppCompatActivity {
                 intentDisplayNote.putExtra("Note",notes.get(i));
                 Log.i("------------>item pushed ", notes.get(i));
 //                startActivity(intentDisplayNote);
-                startActivityForResult(intentDisplayNote,912);
+                startActivityForResult(intentDisplayNote,912);//Display Note
             }
         });
 
@@ -159,8 +157,25 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
         });
-
     }
+
+
+    private void saveNotes() {
+        try {
+            editor.putString(KEY_NOTE, objectSerializer.serialize(notes)).apply();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        reloadNotes();
+    }
+
+
+    private void modifyNote(String update) {
+        notes.set(index,update);
+//        arrayAdapter.notifyDataSetChanged();
+        saveNotes();
+    }
+
 
     private void deleteNote() {
         notes.remove(index);
@@ -168,6 +183,7 @@ public class MainActivity extends AppCompatActivity {
         arrayAdapter.notifyDataSetChanged();
 //        saveNotes();
     }
+
 
     private void launchDialog() {
         new AlertDialog.Builder(this)
@@ -189,20 +205,5 @@ public class MainActivity extends AppCompatActivity {
                 })
                 .show();
     }
-
-    private void getTitles() {//to handle a list with just one line
-        String[] nameTitles;
-        for (String s : notes) {
-            nameTitles = s.split("\n");
-            titles.add(nameTitles[0]);
-        }
-    }
-
-    private void modifyNote(String update) {
-        notes.set(index,update);
-//        arrayAdapter.notifyDataSetChanged();
-        saveNotes();
-    }
-
 
 }
