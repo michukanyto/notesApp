@@ -10,6 +10,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -17,6 +19,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
 
 import com.appsmontreal.notes.Serializer.ObjectSerializer;
@@ -34,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String FORMAT_PATTERN = "yy-mm-dd hh:mm";
     public static final String NOTE_UPDATED = "NOTE_UPDATED" ;
     private ListView notesListView;
+    private EditText filterEditText;
     private Intent intentCreateNote;
     private Intent intentDisplayNote;
     private SharedPreferences sharedPreferences;
@@ -60,7 +64,29 @@ public class MainActivity extends AppCompatActivity {
         notes = new ArrayList<>();
         titles = new ArrayList<>();
         dateFormat = new SimpleDateFormat(FORMAT_PATTERN);
+        prepareFilter();
         reloadNotes();
+    }
+
+   // Filter
+    private void prepareFilter() {
+        filterEditText = findViewById(R.id.filterEditText);
+        filterEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                (MainActivity.this).arrayAdapter.getFilter().filter(charSequence);
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
     }
 
 
