@@ -11,7 +11,9 @@ import android.widget.TextView;
 
 public class DisplayNoteActivity extends AppCompatActivity {
     private String note;
+    private String returnNote;
     private Intent intent;
+    private Intent returnIntent;
     private TextView noteTextView;
     private Button closeButton;
 
@@ -20,6 +22,7 @@ public class DisplayNoteActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display_note);
         intent = getIntent();
+        returnIntent = new Intent();
         note = intent.getStringExtra("Note");
         Log.i("display --------------------> ", note);
         noteTextView = findViewById(R.id.noteTextView);
@@ -28,10 +31,20 @@ public class DisplayNoteActivity extends AppCompatActivity {
         closeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                finish();
+                checkUpdates();
             }
         });
+    }
 
+    private void checkUpdates() {
+        if (!noteTextView.getText().toString().equals(note)) {
+            returnNote = noteTextView.getText().toString();
+            returnIntent.putExtra("NOTE_UPDATED",returnNote);
+            setResult(MainActivity.RESULT_OK,returnIntent);
+            Log.i("--------------->", "We are here, check updates");
+        }
+
+        finish();
     }
 
     private void getNoteText() {

@@ -99,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == 911){
+        if (requestCode == 911){//Create Note
             if (resultCode == RESULT_OK) {
                 note = data.getStringExtra(NAME_NOTE);
                 Log.i("----------------->", note);
@@ -107,9 +107,14 @@ public class MainActivity extends AppCompatActivity {
                 Log.i("----------------->", newNameNote);
                 notes.add(note);
             }
+        }else if(requestCode == 912) {//Display Note
+            if (resultCode == RESULT_OK) {
+                String noteUpdated = data.getStringExtra("NOTE_UPDATED");
+                Log.i("----------------->", noteUpdated);
+                modifyNote(noteUpdated);
+            }
         }
         saveNotes();
-
     }
 
     private void saveNotes() {
@@ -137,9 +142,11 @@ public class MainActivity extends AppCompatActivity {
         notesListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                index = i;
                 intentDisplayNote.putExtra("Note",notes.get(i));
                 Log.i("------------>item pushed ", notes.get(i));
-                startActivity(intentDisplayNote);
+//                startActivity(intentDisplayNote);
+                startActivityForResult(intentDisplayNote,912);
             }
         });
 
@@ -188,6 +195,12 @@ public class MainActivity extends AppCompatActivity {
             nameTitles = s.split("\n");
             titles.add(nameTitles[0]);
         }
+    }
+
+    private void modifyNote(String update) {
+        notes.set(index,update);
+//        arrayAdapter.notifyDataSetChanged();
+        saveNotes();
     }
 
 
