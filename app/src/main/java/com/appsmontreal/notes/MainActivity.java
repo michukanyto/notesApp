@@ -179,16 +179,16 @@ public class MainActivity extends AppCompatActivity {
 
     private void deleteNote() {
         notes.remove(index);
-        arrayAdapter.remove(arrayAdapter.getItem(index));
-        arrayAdapter.notifyDataSetChanged();
-//        saveNotes();
+//        arrayAdapter.remove(arrayAdapter.getItem(index));
+//        arrayAdapter.notifyDataSetChanged();
+        saveNotes();
     }
 
 
     private void launchDialog() {
         new AlertDialog.Builder(this)
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .setTitle("Alert")
+                .setIcon(android.R.drawable.ic_delete)
+                .setTitle("Delete")
                 .setMessage("Do you want to delete this note?")
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
@@ -197,12 +197,7 @@ public class MainActivity extends AppCompatActivity {
                         deleteNote();
                     }
                 })
-                .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        Log.i("---------------->","No pressed");
-                    }
-                })
+                .setNegativeButton("No", null)
                 .show();
     }
 
