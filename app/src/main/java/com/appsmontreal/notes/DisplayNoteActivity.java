@@ -39,7 +39,7 @@ public class DisplayNoteActivity extends AppCompatActivity {
     private void checkUpdates() {
         if (!noteTextView.getText().toString().equals(note)) {
             returnNote = noteTextView.getText().toString();
-            returnIntent.putExtra("NOTE_UPDATED",returnNote);
+            returnIntent.putExtra(MainActivity.NOTE_UPDATED,returnNote);
             setResult(MainActivity.RESULT_OK,returnIntent);
             Log.i("--------------->", "We are here, check updates");
         }

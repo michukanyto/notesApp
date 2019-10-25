@@ -35,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String NAME_NOTE = "NOTE" ;
     public static final String KEY_NOTE = "KEY_NOTE" ;
     public static final String FORMAT_PATTERN = "yy-mm-dd hh:mm";
+    public static final String NOTE_UPDATED = "NOTE_UPDATED" ;
     private ListView notesListView;
     private Intent intentCreateNote;
     private Intent intentDisplayNote;
@@ -109,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }else if(requestCode == 912) {//Display Note
             if (resultCode == RESULT_OK) {
-                String noteUpdated = data.getStringExtra("NOTE_UPDATED");
+                String noteUpdated = data.getStringExtra(NOTE_UPDATED);
                 Log.i("----------------->", noteUpdated);
                 modifyNote(noteUpdated);
             }
