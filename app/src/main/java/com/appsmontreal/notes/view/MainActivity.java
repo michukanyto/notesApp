@@ -1,4 +1,4 @@
-package com.appsmontreal.notes;
+package com.appsmontreal.notes.view;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -22,7 +22,10 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 
-import com.appsmontreal.notes.Serializer.ObjectSerializer;
+import com.appsmontreal.notes.R;
+import com.appsmontreal.notes.controller.NoteController;
+import com.appsmontreal.notes.foundation.ObjectSerializer;
+import com.appsmontreal.notes.model.Note;
 
 import java.io.IOException;
 import java.text.DateFormat;
@@ -36,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String KEY_NOTE = "KEY_NOTE" ;
     public static final String FORMAT_PATTERN = "yy-mm-dd hh:mm";
     public static final String NOTE_UPDATED = "NOTE_UPDATED" ;
+    private NoteController noteController;
     private ListView notesListView;
     private EditText filterEditText;
     private Intent intentCreateNote;
@@ -44,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
     private ObjectSerializer objectSerializer;
     private SharedPreferences.Editor editor;
     private String note;
-    private ArrayList<String> notes;
+    private ArrayList<Note> notes;
     private ArrayList<String> titles;
     private String newNameNote;
     private  DateFormat dateFormat;
@@ -57,13 +61,16 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         notesListView = findViewById(R.id.notesListView);
-        intentCreateNote = new Intent(this,CreateNoteActivity.class);
-        intentDisplayNote = new Intent(this,DisplayNoteActivity.class);
+        intentCreateNote = new Intent(this, CreateNoteActivity.class);
+        intentDisplayNote = new Intent(this, DisplayNoteActivity.class);
         sharedPreferences = getSharedPreferences(FILE_NAME, Context.MODE_PRIVATE);
         editor = sharedPreferences.edit();
         notes = new ArrayList<>();
         titles = new ArrayList<>();
         dateFormat = new SimpleDateFormat(FORMAT_PATTERN);
+
+        noteController =  NoteController.getInstance("shared_preferences");
+
         prepareFilter();
         reloadNotes();
     }
@@ -129,12 +136,14 @@ public class MainActivity extends AppCompatActivity {
                 Log.i("----------------->", note);
                 newNameNote = dateFormat.format(Calendar.getInstance().getTime());
                 Log.i("----------------->", newNameNote);
-                notes.add(note);
+                Note newNote = noteController.createNote(note);
+                notes.add(newNote);
             }
         }else if(requestCode == 912) {//Display Note
             if (resultCode == RESULT_OK) {
                 String noteUpdated = data.getStringExtra(NOTE_UPDATED);
                 Log.i("----------------->", noteUpdated);
+                Note updated = noteController.updateNote()
                 modifyNote(noteUpdated);
             }
         }

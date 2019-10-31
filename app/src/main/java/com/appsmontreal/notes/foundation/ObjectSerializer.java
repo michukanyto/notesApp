@@ -1,6 +1,4 @@
-package com.appsmontreal.notes.Serializer;
-
-import android.util.Log;
+package com.appsmontreal.notes.foundation;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

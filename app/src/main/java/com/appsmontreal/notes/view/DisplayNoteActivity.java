@@ -1,4 +1,4 @@
-package com.appsmontreal.notes;
+package com.appsmontreal.notes.view;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -8,6 +8,9 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+
+import com.appsmontreal.notes.R;
+import com.appsmontreal.notes.view.MainActivity;
 
 public class DisplayNoteActivity extends AppCompatActivity {
     private String note;

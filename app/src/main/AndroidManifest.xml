@@ -9,9 +9,9 @@
         android:roundIcon="@mipmap/addnotes"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".DisplayNoteActivity"></activity>
-        <activity android:name=".CreateNoteActivity" />
-        <activity android:name=".MainActivity">
+        <activity android:name=".view.DisplayNoteActivity"></activity>
+        <activity android:name=".view.CreateNoteActivity" />
+        <activity android:name=".view.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

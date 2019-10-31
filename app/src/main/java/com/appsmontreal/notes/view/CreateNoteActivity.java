@@ -1,20 +1,21 @@
-package com.appsmontreal.notes;
+package com.appsmontreal.notes.view;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.appsmontreal.notes.Serializer.ObjectSerializer;
+import com.appsmontreal.notes.R;
+import com.appsmontreal.notes.controller.NoteController;
+import com.appsmontreal.notes.model.Note;
+import com.appsmontreal.notes.view.MainActivity;
 
 public class CreateNoteActivity extends AppCompatActivity {
 
+    private final NoteController noteController = NoteController.getInstance("shared_preferences");
     private EditText noteEditText;
     private Intent returnIntent;
     private Button saveButton;
@@ -22,24 +23,18 @@ public class CreateNoteActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_create_note);
-        noteEditText = findViewById(R.id.noteEditText);
-        saveButton = findViewById(R.id.saveButton);
-        saveNote();
 
-    }
-
-    private void saveNote() {
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                returnIntent = new Intent();
-                returnIntent.putExtra(MainActivity.NAME_NOTE,noteEditText.getText().toString());
-                setResult(RESULT_OK,returnIntent);
+                noteEditText = findViewById(R.id.noteEditText);
+                Note note = noteController.createNote(noteEditText.getText().toString());
+                saveButton = findViewById(R.id.saveButton);
+                noteController.saveNote(note);
                 finish();
             }
         });
+
+        setContentView(R.layout.activity_create_note);
     }
-
-
 }
