@@ -24,6 +24,8 @@ import android.widget.ListView;
 
 import com.appsmontreal.notes.R;
 import com.appsmontreal.notes.controller.NoteController;
+import com.appsmontreal.notes.dao.DAOFactory;
+import com.appsmontreal.notes.dao.INoteDAO;
 import com.appsmontreal.notes.foundation.ObjectSerializer;
 import com.appsmontreal.notes.model.Note;
 
@@ -52,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<String> titles;
     private String newNameNote;
     private  DateFormat dateFormat;
-    private ArrayAdapter<String> arrayAdapter;
+    private ArrayAdapter<Note> arrayAdapter;
     private int index;
 
 
@@ -69,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
         titles = new ArrayList<>();
         dateFormat = new SimpleDateFormat(FORMAT_PATTERN);
 
-        noteController =  NoteController.getInstance("shared_preferences");
+        noteController =  NoteController.getInstance("sqlite",this);
 
         prepareFilter();
         reloadNotes();
@@ -111,7 +113,8 @@ public class MainActivity extends AppCompatActivity {
         super.onOptionsItemSelected(item);
         switch(item.getItemId()){
             case R.id.addNote:
-                startActivityForResult(intentCreateNote,911);//Create Note
+                startActivity(intentCreateNote);
+//                startActivityForResult(intentCreateNote,911);//Create Note
                 break;
 
             case R.id.exit:
@@ -126,73 +129,105 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //Handling the note that's coming from CreateNoteActivity and DisplayActivity
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == 911){//Create Note
-            if (resultCode == RESULT_OK) {
-                note = data.getStringExtra(NAME_NOTE);
-                Log.i("----------------->", note);
-                newNameNote = dateFormat.format(Calendar.getInstance().getTime());
-                Log.i("----------------->", newNameNote);
-                Note newNote = noteController.createNote(note);
-                notes.add(newNote);
-            }
-        }else if(requestCode == 912) {//Display Note
-            if (resultCode == RESULT_OK) {
-                String noteUpdated = data.getStringExtra(NOTE_UPDATED);
-                Log.i("----------------->", noteUpdated);
-                Note updated = noteController.updateNote()
-                modifyNote(noteUpdated);
-            }
-        }
-        saveNotes();
-    }
+//    @Override
+//    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//
+//        if (requestCode == 911){//Create Note
+//            if (resultCode == RESULT_OK) {
+//                note = data.getStringExtra(NAME_NOTE);
+//                Log.i("----------------->", note);
+//                newNameNote = dateFormat.format(Calendar.getInstance().getTime());
+//                Log.i("----------------->", newNameNote);
+//                Note newNote = noteController.createNote(note);
+//                notes.add(newNote);
+//            }
+//        }else if(requestCode == 912) {//Display Note
+//            if (resultCode == RESULT_OK) {
+//                String noteUpdated = data.getStringExtra(NOTE_UPDATED);
+//                Log.i("----------------->", noteUpdated);
+//                Note updated = noteController.updateNote()
+//                modifyNote(noteUpdated);
+//            }
+//        }
+//        saveNotes();
+//    }
 
 
     private void getTitles() {//to handle a list with just one line
-        String[] nameTitles;
-        for (String s : notes) {
-            nameTitles = s.split("\n");
-            titles.add(nameTitles[0]);
+        try {
+            String[] nameTitles;
+            for (Note n : notes) {
+                nameTitles = n.getText().split("\n");
+                titles.add(nameTitles[0]);
+            }
+
+        }catch (Exception e) {
+            e.printStackTrace();
         }
     }
-
 
     private void reloadNotes() {
         notes.clear();
         titles.clear();
-        try {
-            notes = (ArrayList<String>) objectSerializer.deserialize(sharedPreferences.getString(KEY_NOTE,objectSerializer.serialize(new ArrayList<String>())));
-            getTitles();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        notes = noteController.readAllNotes();
+//        getTitles();
         Log.i("------------>Array", notes.toString());
-        arrayAdapter = new ArrayAdapter<>(this,android.R.layout.simple_list_item_1,titles);
+        arrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, notes);
         notesListView.setAdapter(arrayAdapter);
 
         notesListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                index = i;
-                intentDisplayNote.putExtra("Note",notes.get(i));
-                Log.i("------------>item pushed ", notes.get(i));
-//                startActivity(intentDisplayNote);
-                startActivityForResult(intentDisplayNote,912);//Display Note
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                index = position;
+                intentDisplayNote.putExtra(NAME_NOTE,notes.get(position));
+                startActivity(intentDisplayNote);
             }
         });
 
         notesListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
-            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
-                index = i;
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                index = position;
                 launchDialog();
                 return true;
             }
         });
     }
+
+//    private void reloadNotes() {
+//        notes.clear();
+//        titles.clear();
+//        try {
+//            notes = (ArrayList<String>) objectSerializer.deserialize(sharedPreferences.getString(KEY_NOTE,objectSerializer.serialize(new ArrayList<String>())));
+//            getTitles();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        Log.i("------------>Array", notes.toString());
+//        arrayAdapter = new ArrayAdapter<>(this,android.R.layout.simple_list_item_1,titles);
+//        notesListView.setAdapter(arrayAdapter);
+//
+//        notesListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+//                index = i;
+//                intentDisplayNote.putExtra("Note",notes.get(i));
+//                Log.i("------------>item pushed ", notes.get(i));
+////                startActivity(intentDisplayNote);
+//                startActivityForResult(intentDisplayNote,912);//Display Note
+//            }
+//        });
+//
+//        notesListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+//            @Override
+//            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+//                index = i;
+//                launchDialog();
+//                return true;
+//            }
+//        });
+//    }
 
 
     private void saveNotes() {
@@ -205,11 +240,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void modifyNote(String update) {
-        notes.set(index,update);
-//        arrayAdapter.notifyDataSetChanged();
-        saveNotes();
-    }
+//    private void modifyNote(String update) {
+//        notes.set(index,update);
+////        arrayAdapter.notifyDataSetChanged();
+//        saveNotes();
+//    }
 
 
     private void deleteNote() {

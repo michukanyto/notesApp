@@ -26,7 +26,7 @@ public class DisplayNoteActivity extends AppCompatActivity {
         setContentView(R.layout.activity_display_note);
         intent = getIntent();
         returnIntent = new Intent();
-        note = intent.getStringExtra("Note");
+        note = intent.getStringExtra(MainActivity.NAME_NOTE);
         Log.i("display --------------------> ", note);
         noteTextView = findViewById(R.id.noteTextView);
         getNoteText();
