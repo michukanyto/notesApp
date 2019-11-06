@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.appsmontreal.notes.R;
+import com.appsmontreal.notes.model.Note;
 import com.appsmontreal.notes.view.MainActivity;
 
 public class DisplayNoteActivity extends AppCompatActivity {
@@ -26,8 +27,9 @@ public class DisplayNoteActivity extends AppCompatActivity {
         setContentView(R.layout.activity_display_note);
         intent = getIntent();
         returnIntent = new Intent();
+//        note = intent.getSerializableExtra(MainActivity.NAME_NOTE));
         note = intent.getStringExtra(MainActivity.NAME_NOTE);
-        Log.i("display --------------------> ", note);
+        Log.i("display --------------------> ", note + "yyyy");
         noteTextView = findViewById(R.id.noteTextView);
         getNoteText();
         closeButton = findViewById(R.id.closeButton);

@@ -21,6 +21,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.appsmontreal.notes.R;
 import com.appsmontreal.notes.controller.NoteController;
@@ -180,7 +181,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 index = position;
-                intentDisplayNote.putExtra(NAME_NOTE,notes.get(position));
+                intentDisplayNote.putExtra(NAME_NOTE,notes.get(position).getText());
                 startActivity(intentDisplayNote);
             }
         });
@@ -195,39 +196,12 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-//    private void reloadNotes() {
-//        notes.clear();
-//        titles.clear();
-//        try {
-//            notes = (ArrayList<String>) objectSerializer.deserialize(sharedPreferences.getString(KEY_NOTE,objectSerializer.serialize(new ArrayList<String>())));
-//            getTitles();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//        Log.i("------------>Array", notes.toString());
-//        arrayAdapter = new ArrayAdapter<>(this,android.R.layout.simple_list_item_1,titles);
-//        notesListView.setAdapter(arrayAdapter);
-//
-//        notesListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-//                index = i;
-//                intentDisplayNote.putExtra("Note",notes.get(i));
-//                Log.i("------------>item pushed ", notes.get(i));
-////                startActivity(intentDisplayNote);
-//                startActivityForResult(intentDisplayNote,912);//Display Note
-//            }
-//        });
-//
-//        notesListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-//            @Override
-//            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
-//                index = i;
-//                launchDialog();
-//                return true;
-//            }
-//        });
-//    }
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        reloadNotes();
+    }
+
 
 
     private void saveNotes() {
@@ -248,10 +222,18 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void deleteNote() {
-        notes.remove(index);
-//        arrayAdapter.remove(arrayAdapter.getItem(index));
-//        arrayAdapter.notifyDataSetChanged();
-        saveNotes();
+        Log.i("===================> ", Integer.toString(notes.get(index).getId()));
+        boolean isItDeleted = noteController.deleteNote(notes.get(index).getId());
+
+        if (isItDeleted) {
+            notes.remove(index);
+            Toast.makeText(this,"Note deleted successfully", Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(this,"Note was no deleted", Toast.LENGTH_LONG).show();
+        }
+
+        arrayAdapter.notifyDataSetChanged();
+//        reloadNotes();
     }
 
 
