@@ -55,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<String> titles;
     private String newNameNote;
     private  DateFormat dateFormat;
-    private ArrayAdapter<Note> arrayAdapter;
+    private ArrayAdapter<String> arrayAdapter;
     private int index;
 
 
@@ -172,16 +172,21 @@ public class MainActivity extends AppCompatActivity {
         notes.clear();
         titles.clear();
         notes = noteController.readAllNotes();
-//        getTitles();
-        Log.i("------------>Array", notes.toString());
-        arrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, notes);
+        getTitles();
+        for (Note n : notes){
+            Log.i("------------>Array", n.getText());
+        }
+//        Log.i("------------>Array", notes.get);
+        arrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, titles);
         notesListView.setAdapter(arrayAdapter);
 
         notesListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 index = position;
-                intentDisplayNote.putExtra(NAME_NOTE,notes.get(position).getText());
+                Note displayNote = notes.get(index);
+                Log.i("FROM ======== MAIN =>", displayNote.getText() + " " + displayNote.getId());
+                intentDisplayNote.putExtra(NAME_NOTE,displayNote);
                 startActivity(intentDisplayNote);
             }
         });
