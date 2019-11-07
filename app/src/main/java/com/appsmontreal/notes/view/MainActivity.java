@@ -48,9 +48,7 @@ public class MainActivity extends AppCompatActivity {
     private Intent intentCreateNote;
     private Intent intentDisplayNote;
     private SharedPreferences sharedPreferences;
-    private ObjectSerializer objectSerializer;
     private SharedPreferences.Editor editor;
-    private String note;
     private ArrayList<Note> notes;
     private ArrayList<String> titles;
     private String newNameNote;
@@ -129,31 +127,6 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    //Handling the note that's coming from CreateNoteActivity and DisplayActivity
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//
-//        if (requestCode == 911){//Create Note
-//            if (resultCode == RESULT_OK) {
-//                note = data.getStringExtra(NAME_NOTE);
-//                Log.i("----------------->", note);
-//                newNameNote = dateFormat.format(Calendar.getInstance().getTime());
-//                Log.i("----------------->", newNameNote);
-//                Note newNote = noteController.createNote(note);
-//                notes.add(newNote);
-//            }
-//        }else if(requestCode == 912) {//Display Note
-//            if (resultCode == RESULT_OK) {
-//                String noteUpdated = data.getStringExtra(NOTE_UPDATED);
-//                Log.i("----------------->", noteUpdated);
-//                Note updated = noteController.updateNote()
-//                modifyNote(noteUpdated);
-//            }
-//        }
-//        saveNotes();
-//    }
-
 
     private void getTitles() {//to handle a list with just one line
         try {
@@ -173,10 +146,7 @@ public class MainActivity extends AppCompatActivity {
         titles.clear();
         notes = noteController.readAllNotes();
         getTitles();
-        for (Note n : notes){
-            Log.i("------------>Array", n.getText());
-        }
-//        Log.i("------------>Array", notes.get);
+        Log.i("------------>Array", notes.toString());
         arrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, titles);
         notesListView.setAdapter(arrayAdapter);
 
@@ -209,23 +179,6 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-    private void saveNotes() {
-        try {
-            editor.putString(KEY_NOTE, objectSerializer.serialize(notes)).apply();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        reloadNotes();
-    }
-
-
-//    private void modifyNote(String update) {
-//        notes.set(index,update);
-////        arrayAdapter.notifyDataSetChanged();
-//        saveNotes();
-//    }
-
-
     private void deleteNote() {
         Log.i("===================> ", Integer.toString(notes.get(index).getId()));
         boolean isItDeleted = noteController.deleteNote(notes.get(index).getId());
@@ -238,7 +191,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         arrayAdapter.notifyDataSetChanged();
-//        reloadNotes();
+        reloadNotes();
     }
 
 

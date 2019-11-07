@@ -32,7 +32,7 @@ public class CreateNoteActivity extends AppCompatActivity {
             public void onClick(View view) {
                 noteEditText = findViewById(R.id.noteEditText);
                 Note note = noteController.createNote(noteEditText.getText().toString());
-                Log.i("==============> ", note.toString());
+                Log.i("==============>CreateNoteActivity ", note.toString());
                 boolean isItSaved = noteController.saveNote(note);
 
                 if (isItSaved) {

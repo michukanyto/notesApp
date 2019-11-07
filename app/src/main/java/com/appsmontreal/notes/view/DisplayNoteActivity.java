@@ -17,9 +17,7 @@ import com.appsmontreal.notes.view.MainActivity;
 
 public class DisplayNoteActivity extends AppCompatActivity {
     private Note note;
-    private String returnNote;
-    private Intent intent;
-    private Intent returnIntent;
+//    private Intent intent;
     private TextView noteTextView;
     private Button closeButton;
     private NoteController noteController;
@@ -28,8 +26,8 @@ public class DisplayNoteActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display_note);
-        intent = getIntent();
-        returnIntent = new Intent();
+        noteController = NoteController.getInstance("sqlite",getApplicationContext());
+//        intent = getIntent();
         note = (Note) getIntent().getSerializableExtra(MainActivity.NAME_NOTE);
 //        note = intent.getStringExtra(MainActivity.NAME_NOTE);
         Log.i("display --------------------> ",  note.getText());
@@ -50,20 +48,9 @@ public class DisplayNoteActivity extends AppCompatActivity {
                     }
                 }
                 finish();
-//                checkUpdates();
             }
         });
     }
 
-//    private void checkUpdates() {
-//        if (!noteTextView.getText().toString().equals(note)) {
-//            returnNote = noteTextView.getText().toString();
-//            returnIntent.putExtra(MainActivity.NOTE_UPDATED,returnNote);
-//            setResult(MainActivity.RESULT_OK,returnIntent);
-//            Log.i("--------------->", "We are here, check updates");
-//        }
-//
-//        finish();
-//    }
 
 }
