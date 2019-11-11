@@ -42,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String KEY_NOTE = "KEY_NOTE" ;
     public static final String FORMAT_PATTERN = "yy-mm-dd hh:mm";
     public static final String NOTE_UPDATED = "NOTE_UPDATED" ;
+    public static final String DATA_SOURCE_NAME = "fire_base";
     private NoteController noteController;
     private ListView notesListView;
     private EditText filterEditText;
@@ -70,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
         titles = new ArrayList<>();
         dateFormat = new SimpleDateFormat(FORMAT_PATTERN);
 
-        noteController =  NoteController.getInstance("sqlite",this);
+        noteController =  NoteController.getInstance(DATA_SOURCE_NAME,this);
 
         prepareFilter();
         reloadNotes();
@@ -134,6 +135,7 @@ public class MainActivity extends AppCompatActivity {
             for (Note n : notes) {
                 nameTitles = n.getText().split("\n");
                 titles.add(nameTitles[0]);
+                Log.i("============> Titles",n.getText());
             }
 
         }catch (Exception e) {
