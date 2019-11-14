@@ -1,7 +1,6 @@
 package com.appsmontreal.notes.view;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -25,18 +24,16 @@ import android.widget.Toast;
 
 import com.appsmontreal.notes.R;
 import com.appsmontreal.notes.controller.NoteController;
-import com.appsmontreal.notes.dao.DAOFactory;
-import com.appsmontreal.notes.dao.INoteDAO;
-import com.appsmontreal.notes.foundation.ObjectSerializer;
+import com.appsmontreal.notes.model.IModelListener;
 import com.appsmontreal.notes.model.Note;
 
-import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
+
     private static final String FILE_NAME = "DATA";
     public static final String NAME_NOTE = "NOTE" ;
     public static final String KEY_NOTE = "KEY_NOTE" ;
@@ -129,7 +126,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void getTitles() {//to handle a list with just one line
+    private void getTitles(List<Note> notes) {//to handle a list with just one line
         try {
             String[] nameTitles;
             for (Note n : notes) {
@@ -146,31 +143,36 @@ public class MainActivity extends AppCompatActivity {
     private void reloadNotes() {
         notes.clear();
         titles.clear();
-        notes = noteController.readAllNotes();
-        getTitles();
-        Log.i("------------>Array", notes.toString());
-        arrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, titles);
-        notesListView.setAdapter(arrayAdapter);
-
-        notesListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        noteController.readAllNotes(new IModelListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                index = position;
-                Note displayNote = notes.get(index);
-                Log.i("FROM ======== MAIN =>", displayNote.getText() + " " + displayNote.getId());
-                intentDisplayNote.putExtra(NAME_NOTE,displayNote);
-                startActivity(intentDisplayNote);
+            public void onGetAllNotes(List<Note> notes) {
+                getTitles(notes);
+                Log.i("------------>Array", notes.toString());
+                arrayAdapter = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, titles);
+                notesListView.setAdapter(arrayAdapter);
+
+                notesListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        index = position;
+                        Note displayNote = notes.get(index);
+                        Log.i("FROM ======== MAIN =>", displayNote.getText() + " " + displayNote.getId());
+                        intentDisplayNote.putExtra(NAME_NOTE,displayNote);
+                        startActivity(intentDisplayNote);
+                    }
+                });
+
+                notesListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+                    @Override
+                    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                        index = position;
+                        launchDialog();
+                        return true;
+                    }
+                });
             }
         });
 
-        notesListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                index = position;
-                launchDialog();
-                return true;
-            }
-        });
     }
 
     @Override
@@ -212,5 +214,4 @@ public class MainActivity extends AppCompatActivity {
                 .setNegativeButton("No", null)
                 .show();
     }
-
 }
