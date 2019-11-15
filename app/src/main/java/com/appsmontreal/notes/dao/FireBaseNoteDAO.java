@@ -29,6 +29,12 @@ public class FireBaseNoteDAO implements INoteDAO {
 
     @Override
     public Note getNoteById(int id) {
+        for (Note n : notes) {
+            if (n.getId() == id) {
+                return n;
+            }
+        }
+
         return null;
     }
 

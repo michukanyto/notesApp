@@ -26,7 +26,7 @@ public class DisplayNoteActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display_note);
-        noteController = NoteController.getInstance("sqlite",getApplicationContext());
+        noteController = NoteController.getInstance("fire_base",getApplicationContext());
 //        intent = getIntent();
         note = (Note) getIntent().getSerializableExtra(MainActivity.NAME_NOTE);
 //        note = intent.getStringExtra(MainActivity.NAME_NOTE);
