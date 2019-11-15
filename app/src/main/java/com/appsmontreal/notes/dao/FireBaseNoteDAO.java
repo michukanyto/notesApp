@@ -19,13 +19,13 @@ import java.util.List;
 public class FireBaseNoteDAO implements INoteDAO {
     private FirebaseDatabase mDatabase;
     private DatabaseReference mReferenceNote;
+    private List<Note> notes;
 
     public FireBaseNoteDAO() {
         mDatabase = FirebaseDatabase.getInstance();
         mReferenceNote = mDatabase.getReference("Notes");
-
     }
-    
+
 
     @Override
     public Note getNoteById(int id) {
@@ -37,14 +37,14 @@ public class FireBaseNoteDAO implements INoteDAO {
         mReferenceNote.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                List<Note> notes = new ArrayList<>();
+                notes = new ArrayList<>();
                 for (DataSnapshot keyNode : dataSnapshot.getChildren()) {
                     Note aNote = keyNode.getValue(Note.class);
                     notes.add(aNote);
                     Log.i("===============> readNote ", aNote.getText() + ", " + aNote.getId());
 
                 }
-                daoListener.onGetAllNotes(notes);
+                daoListener.onGetAllNotes(notes);//Charge ArrayList got it previously
             }
 
             @Override
@@ -56,24 +56,43 @@ public class FireBaseNoteDAO implements INoteDAO {
 
     @Override
     public boolean deleteNoteById(int id) {
-        return false;
+
+        final boolean[] isItSuccess = {true};
+        mReferenceNote.child(String.valueOf(id)).setValue(null).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                isItSuccess[0] = false;
+
+            }
+        });
+        return isItSuccess[0];
     }
+
 
     @Override
     public boolean updateNote(Note note) {
-        return false;
+        final boolean[] isItSuccess = {true};
+        mReferenceNote.child(String.valueOf(note.getId())).setValue(note).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                isItSuccess[0] = false;
+            }
+        });
+
+        return isItSuccess[0];
     }
 
     @Override
     public boolean insertNote(Note note) {
-        final boolean[] isItSuccess = {false};
-        Note updateNote = new Note(0,note.getText()); // FIXME: Use IDs the right way
+        final boolean[] isItSuccess = {true};
+        int id = notes.size() + 1 ;
+        Note updateNote = new Note(id,note.getText()); // FIXME: Use IDs the right way
         String key = mReferenceNote.push().getKey();
         // Log.i("==========> insert ", Integer.toString(id));
-        mReferenceNote.child(key).setValue(updateNote).addOnSuccessListener(new OnSuccessListener<Void>() {
+        mReferenceNote.child(String.valueOf(id)).setValue(updateNote).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
-                isItSuccess[0] = true;
+                isItSuccess[0] = false;
             }
         });
         return isItSuccess[0];

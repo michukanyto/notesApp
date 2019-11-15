@@ -46,8 +46,7 @@ public class MainActivity extends AppCompatActivity {
     private Intent intentCreateNote;
     private Intent intentDisplayNote;
     private SharedPreferences sharedPreferences;
-    private SharedPreferences.Editor editor;
-    private ArrayList<Note> notes;
+    private ArrayList<Note> listNotes;
     private ArrayList<String> titles;
     private String newNameNote;
     private  DateFormat dateFormat;
@@ -63,8 +62,7 @@ public class MainActivity extends AppCompatActivity {
         intentCreateNote = new Intent(this, CreateNoteActivity.class);
         intentDisplayNote = new Intent(this, DisplayNoteActivity.class);
         sharedPreferences = getSharedPreferences(FILE_NAME, Context.MODE_PRIVATE);
-        editor = sharedPreferences.edit();
-        notes = new ArrayList<>();
+        listNotes = new ArrayList<>();
         titles = new ArrayList<>();
         dateFormat = new SimpleDateFormat(FORMAT_PATTERN);
 
@@ -141,11 +139,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void reloadNotes() {
-        notes.clear();
-        titles.clear();
+//        listNotes.clear();
+//        titles.clear();
         noteController.readAllNotes(new IModelListener() {
             @Override
             public void onGetAllNotes(List<Note> notes) {
+                listNotes.clear();
+                titles.clear();
+                listNotes = (ArrayList<Note>) notes;
                 getTitles(notes);
                 Log.i("------------>Array", notes.toString());
                 arrayAdapter = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, titles);
@@ -184,17 +185,17 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void deleteNote() {
-        Log.i("===================> ", Integer.toString(notes.get(index).getId()));
-        boolean isItDeleted = noteController.deleteNote(notes.get(index).getId());
+        Log.i("===================> ", Integer.toString(listNotes.get(index).getId()));
+        boolean isItDeleted = noteController.deleteNote(listNotes.get(index).getId());
 
         if (isItDeleted) {
-            notes.remove(index);
+            listNotes.remove(index);
             Toast.makeText(this,"Note deleted successfully", Toast.LENGTH_LONG).show();
         } else {
             Toast.makeText(this,"Note was no deleted", Toast.LENGTH_LONG).show();
         }
 
-        arrayAdapter.notifyDataSetChanged();
+//        arrayAdapter.notifyDataSetChanged();
         reloadNotes();
     }
 

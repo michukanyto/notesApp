@@ -13,4 +13,9 @@ public interface IModelListener {
     default void onGetNoteById(Note note) {
         // Do nothing
     }
+
+//    default void onDeleteNote(int id) {
+//        //Do nothing
+//    }
+
 }

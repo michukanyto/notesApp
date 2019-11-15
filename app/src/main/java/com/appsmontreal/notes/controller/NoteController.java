@@ -48,6 +48,10 @@ public class NoteController {
         return noteDAO.deleteNoteById(id);
     }
 
+//    public boolean deleteNote (IModelListener daoListener) {
+//        return noteDAO.deleteNoteById(daoListener);
+//    }
+
     public boolean saveNote(Note note) {
         return noteDAO.insertNote(note);
     }

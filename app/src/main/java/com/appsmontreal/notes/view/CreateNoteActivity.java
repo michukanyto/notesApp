@@ -17,7 +17,7 @@ import com.appsmontreal.notes.view.MainActivity;
 
 public class CreateNoteActivity extends AppCompatActivity {
 
-    private final NoteController noteController = NoteController.getInstance("sqlite",this);
+    private final NoteController noteController = NoteController.getInstance("fire_base",this);
     private EditText noteEditText;
     private Button saveButton;
 
