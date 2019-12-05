@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#03A9F4"
     tools:context=".view.CreateNoteActivity">
 
     <EditText
@@ -14,20 +15,20 @@
         android:layout_marginTop="32dp"
         android:layout_marginEnd="16dp"
         android:background="#DDDADA"
+        android:editable="true"
         android:ems="10"
+        android:enabled="true"
+        android:focusable="true"
         android:gravity="start|top"
         android:inputType="textMultiLine"
+        android:isScrollContainer="true"
+        android:maxLines="22"
+        android:padding="24dp"
+        android:textIsSelectable="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.484"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:padding="24dp"
-        android:editable="true"
-        android:enabled="true"
-        android:maxLines="22"
-        android:isScrollContainer="true"
-        android:textIsSelectable="true"
-        android:focusable="true"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/saveButton"
