@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#BBE9BD"
     tools:context=".DisplayNoteActivity">
 
     <TextView
@@ -14,12 +15,12 @@
         android:layout_marginTop="32dp"
         android:layout_marginEnd="16dp"
         android:background="#DDDADA"
+        android:editable="true"
         android:enabled="true"
         android:isScrollContainer="true"
         android:maxLines="22"
         android:padding="24dp"
         android:textIsSelectable="true"
-        android:editable="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
